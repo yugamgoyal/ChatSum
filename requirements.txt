@@ -1,0 +1,4 @@
+flask
+openai
+pyrogram
+flask[async]
