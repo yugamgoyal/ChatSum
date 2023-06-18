@@ -48,12 +48,13 @@ def verify_phone():
 
 @app.route("/get_users")
 async def get_users():
-    session_name = request.args.get("session_name", default="yugam")
-
+    session_name = request.args.get("session_name", default="my_account")
+    # async def get_chats_async():
     api_id = os.environ["TELEGRAM_API_ID"]
     api_hash = os.environ["TELEGRAM_API_HASH"]
     users = []
-    async with Client(session_name, api_id=api_id, api_hash=api_hash) as client:
+    telegramClient = Client(session_name, api_id=api_id, api_hash=api_hash)
+    async with telegramClient as client:
         async for dialog in client.get_dialogs():
             if dialog.chat.username == None:
                 continue
@@ -96,15 +97,18 @@ async def get_users():
 # get_response and return json
 @app.route("/get_chat_summary")
 async def get_chat_summary():
-    session_name = request.args.get("session_name", default="yugam")
+    session_name = request.args.get("session_name", default="my_account")
     chat_id = "@" + request.args.get("username", default="cdevadhar")
     text = ""
-    async with Client(session_name, api_id=api_id, api_hash=api_hash) as client:
+    telegramClient = Client(session_name, api_id=api_id, api_hash=api_hash)
+    async with telegramClient as client:
         yesterday = datetime.utcnow() - timedelta(days=1)
         async for message in client.get_chat_history(chat_id):
             if message.date > yesterday:
                 text += f"\n {message.text}"
                 print(f"From: {message.chat.id}\n{message.text}\n\n")
+    if (text==""):
+        return "No messages in the past 24 hours!"
     # Define the system message to instruct the model
     system_message = "You are a helpful assistant that summarizes human conversations. Please read the messages below and provide a concise summary. Ignore any terms, policies, or non-human conversation."
     # Define the prompt to summarize the chat history
