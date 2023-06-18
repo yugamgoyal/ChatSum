@@ -14,6 +14,8 @@ api_hash = os.environ["TELEGRAM_API_HASH"]
 openai.api_key = os.environ["OPENAI_API_KEY"]
 app = Flask(__name__)
 
+client = Client(name="")
+
 
 @app.route("/", methods=["GET", "POST"])
 def welcome():
@@ -38,6 +40,7 @@ def verify_phone():
     # As the telethon functions are asynchronous and Flask route functions are synchronous,
     # We have to run the asynchronous function in the event loop
     asyncio.run(send_code_and_wait(phone_number))
+
     # You may want to implement a way to return whether the process was successful or not.
     # For the purpose of this example, it is just returning a simple JSON response.
     return {"message": "Phone number verification process initiated."}
@@ -46,7 +49,7 @@ def verify_phone():
 @app.route("/get_users")
 async def get_users():
     session_name = request.args.get("session_name", default="yugam")
-    # async def get_chats_async():
+
     api_id = os.environ["TELEGRAM_API_ID"]
     api_hash = os.environ["TELEGRAM_API_HASH"]
     users = []
@@ -54,10 +57,35 @@ async def get_users():
         async for dialog in client.get_dialogs():
             if dialog.chat.username == None:
                 continue
-            detail = {"chatName": dialog.chat.title, "userName": dialog.chat.username}
+
+            detail = {
+                "chatName": dialog.chat.title,
+                "userName": dialog.chat.username,
+                "chatID": dialog.chat.id,
+                "totalMessages": await client.get_chat_history_count(
+                    chat_id=dialog.chat.id
+                ),
+                "unreadMessages": dialog.unread_messages_count,
+                "attachment": await client.get_chat_photos_count(
+                    chat_id=dialog.chat.id
+                ),
+            }
+
             users.append(detail)
         print("users: ", users)
     return users
+
+
+# @app.route("/get_user")
+# async def get_user():
+#     session_name = request.args.get("session_name", default="yugam")
+#     client.get_chat_
+#     asyncio.run(count_messages())
+#     user = {"total_messages": 0, "unread": 0, "attachments": 0}
+
+#     # asyncio.run(count_messages('chat_id'))
+
+#     return user
 
 
 # Input: username, session_name
