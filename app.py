@@ -62,26 +62,29 @@ async def get_users():
             chat_id = dialog.chat.id
 
             # Calculate the timestamps for the previous day
-            today = datetime.utcnow().date()
-            previous_day = today - timedelta(days=1)
-            previous_day_start = datetime.combine(previous_day, datetime.min.time())
-            # yesterday = datetime.utcnow() - timedelta(days=1)
+            # today = datetime.utcnow().date()
+            # previous_day = today - timedelta(days=1)
+            # previous_day_start = datetime.combine(previous_day, datetime.min.time())
+            yesterday = datetime.utcnow() - timedelta(days=1)
 
             # Get the messages within the specified time range
             messages = client.get_chat_history(
                 chat_id=chat_id,
                 limit=0,
-                offset_date=previous_day_start,
+                offset_date=yesterday,
             )
 
             # Count the number of messages
             message_count = 0
+            attachments = 0
             async for message in messages:
                 message_count += 1
+                if message.media:
+                    attachments += 1
 
             unread_messages = dialog.unread_messages_count
 
-            attachment = await client.get_chat_photos_count(chat_id=chat_id)
+            # attachment = await client.get_chat_photos_count(chat_id=chat_id)
 
             detail = {
                 "chatName": dialog.chat.title,
@@ -89,7 +92,7 @@ async def get_users():
                 "chatID": chat_id,
                 "totalMessages": message_count,
                 "unreadMessages": unread_messages,
-                "attachment": attachment,
+                "attachment": attachments,
             }
 
             users.append(detail)
