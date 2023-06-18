@@ -65,7 +65,7 @@ function ChannelListScreen({route, navigation}) {
 						return <Pressable
 							onPress={()=>{
 								setSelectedChannel(key);
-								navigation.navigate('Channel Screen', {userName: chat.userName, chatName: chat.chatName});
+								navigation.navigate('Channel Screen', {userName: chat.userName, chatName: chat.chatName, color: colors[chat.userName]});
 							}}
 							style={
 							{

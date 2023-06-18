@@ -43,7 +43,7 @@ function LoginScreen({route, navigation}) {
 							onFocus={() => setMarginTop(370)}
 							onEndEditing={()=>{
 								setMarginTop(500);
-								navigation.navigate("Chats");
+								navigation.replace("Chats");
 							}}
 							returnKeyType="done"
 						>

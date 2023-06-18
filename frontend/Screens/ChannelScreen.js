@@ -2,6 +2,8 @@ import {View, Text} from "react-native";
 import {useState, useEffect} from "react";
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const storeSummary = async (chat, value) => {
 	try {
@@ -48,10 +50,42 @@ function ChannelScreen({route, navigation}) {
 	}, []);
 	return (
 		<View>
-			<View style={{height: 50, width: "100%", backgroundColor:"#eee"}}></View>
-			<Text>
-				{summary}
-			</Text>
+			<LinearGradient
+        	// Background Linear Gradient
+        		colors={['#f12711', '#f5af19']}
+				style={{
+					position: "relative",
+					width: "100%",
+					height: "100%",
+					zIndex: 1
+				}}
+      		>
+			
+			<View style={{flexDirection:"row"}}>
+				<View style={{height: 120, width: 260, marginTop: 100, margin: 10, borderRadius: 10, backgroundColor: "white", shadowRadius: 10, shadowColor: "black", shadowOpacity: 0.5}}>
+					<Text style={{fontSize: 32, fontWeight: "bold", marginRight: "auto", marginLeft: "auto", marginTop: "auto", marginBottom: "auto"}}>Daily Summary</Text>
+				</View>
+				<View style={{height: 120, width: 110, marginTop: 100, margin: 10, borderRadius: 10, backgroundColor: "white", shadowRadius: 10, shadowColor: "black", shadowOpacity: 0.5}}>
+					<Text style={{fontSize: 20, fontWeight: "bold", marginLeft: "auto", marginRight: "auto", marginTop: "auto", marginBottom: "auto"}}>June 18, 2023</Text>
+				</View>
+			</View>
+
+			<View style={{flexDirection:"row"}}>
+				<View style={{height: 190, width: 220, marginTop: 15, margin: 10, borderRadius: 10, backgroundColor: "white", shadowRadius: 10, shadowColor: "black", shadowOpacity: 0.5}}>
+					{route.params.chatName!=null ? <Ionicons name="people-circle" style={{marginLeft: 55 }}size={125} color={route.params.color} />: <Ionicons name="person-circle" size={125} style={{marginLeft: 55 }} color={route.params.color} />}
+					<Text style={{fontSize: 20, fontWeight: "bold", marginLeft: "auto", marginRight: "auto", marginTop: "auto", marginBottom: "auto"}}>{route.params.chatName!=null ? route.params.chatName: route.params.userName}</Text>
+				</View>
+				<View style={{height: 190, width: 150, marginTop: 15, margin: 10, borderRadius: 10, backgroundColor: "white", shadowRadius: 10, shadowColor: "black", shadowOpacity: 0.5}}>
+					<Text style={{fontSize: 20, fontWeight: "bold", margin: 10}}>55 Messages</Text>
+					<Text style={{fontSize: 20, fontWeight: "bold", margin: 10}}>53 Unread</Text>
+					<Text style={{fontSize: 19, fontWeight: "bold", margin: 10}}>22 Attachments</Text>
+				</View>
+			</View>
+			<View style={{height: 300, width: 390, marginTop: 15, margin: 10, borderRadius: 10, backgroundColor: "white", shadowRadius: 10, shadowColor: "black", shadowOpacity: 0.5}}>
+					<Text style={{fontSize: 20, fontWeight: "bold", margin: 20}}>{summary}</Text>
+			</View>
+			
+			</LinearGradient>
 		</View>
 	)
 }
