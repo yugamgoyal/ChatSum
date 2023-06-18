@@ -1,5 +1,5 @@
-
-function ChannelScreen(props) {
+import {View, Text} from "react-native";
+function ChannelScreen({route, navigation}) {
 	return (
 		<View>
 			<Text>
