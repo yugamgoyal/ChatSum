@@ -1,3 +1,4 @@
+import asyncio
 import os
 from datetime import datetime, timedelta
 
@@ -6,13 +7,40 @@ from dotenv import load_dotenv
 from flask import Flask, request
 from pyrogram import Client
 
-app = Flask(__name__)
 load_dotenv()
+
+api_id = os.environ["TELEGRAM_API_ID"]
+api_hash = os.environ["TELEGRAM_API_HASH"]
+openai.api_key = os.environ["OPENAI_API_KEY"]
+app = Flask(__name__)
 
 
 @app.route("/", methods=["GET", "POST"])
 def welcome():
     return "home"
+
+
+# This is an async function that sends a code request and waits for the user to enter it
+async def send_code_and_wait(phone_number):
+    client = Client(
+        name=str(phone_number),
+        api_id=api_id,
+        api_hash=api_hash,
+        phone_number=phone_number,
+    )
+    await client.start()
+    # Here you could possibly listen for the code or ask the user to enter it in your web app
+
+
+@app.route("/verify_phone", methods=["POST"])
+def verify_phone():
+    phone_number = request.form.get("phone_number")
+    # As the telethon functions are asynchronous and Flask route functions are synchronous,
+    # We have to run the asynchronous function in the event loop
+    asyncio.run(send_code_and_wait(phone_number))
+    # You may want to implement a way to return whether the process was successful or not.
+    # For the purpose of this example, it is just returning a simple JSON response.
+    return {"message": "Phone number verification process initiated."}
 
 
 @app.route("/get_users")
@@ -42,9 +70,6 @@ async def get_users():
 async def get_chat_summary():
     session_name = request.args.get("session_name", default="yugam")
     chat_id = "@" + request.args.get("username", default="cdevadhar")
-    api_id = os.environ["TELEGRAM_API_ID"]
-    api_hash = os.environ["TELEGRAM_API_HASH"]
-    openai.api_key = os.environ["OPENAI_API_KEY"]
     text = ""
     async with Client(session_name, api_id=api_id, api_hash=api_hash) as client:
         yesterday = datetime.utcnow() - timedelta(days=1)
