@@ -1,4 +1,4 @@
-import {View, Text} from "react-native";
+import {View, Text, Pressable} from "react-native";
 import {useState, useEffect} from "react";
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -60,29 +60,51 @@ function ChannelScreen({route, navigation}) {
 					zIndex: 1
 				}}
       		>
-			
+			<Pressable 
+				style={{flexDirection: "row", marginTop: 50}} 
+				onPress={()=> {
+					navigation.pop();
+				}}
+			>
+				<Ionicons name="chevron-back" size={36} color="black"/>
+				<Text style={{fontSize: 20, marginTop: 8}}>Back</Text>
+			</Pressable>
 			<View style={{flexDirection:"row"}}>
-				<View style={{height: 120, width: 260, marginTop: 100, margin: 10, borderRadius: 10, backgroundColor: "white", shadowRadius: 10, shadowColor: "black", shadowOpacity: 0.5}}>
+				<View style={{height: 120, width: 260, marginTop: 20, margin: 10, borderRadius: 10, backgroundColor: "white", shadowRadius: 10, shadowColor: "black", shadowOpacity: 0.5}}>
 					<Text style={{fontSize: 32, fontWeight: "bold", marginRight: "auto", marginLeft: "auto", marginTop: "auto", marginBottom: "auto"}}>Daily Summary</Text>
 				</View>
-				<View style={{height: 120, width: 110, marginTop: 100, margin: 10, borderRadius: 10, backgroundColor: "white", shadowRadius: 10, shadowColor: "black", shadowOpacity: 0.5}}>
+				<View style={{height: 120, width: 110, marginTop: 20, margin: 10, borderRadius: 10, backgroundColor: "white", shadowRadius: 10, shadowColor: "black", shadowOpacity: 0.5}}>
 					<Text style={{fontSize: 20, fontWeight: "bold", marginLeft: "auto", marginRight: "auto", marginTop: "auto", marginBottom: "auto"}}>June 18, 2023</Text>
 				</View>
 			</View>
 
 			<View style={{flexDirection:"row"}}>
-				<View style={{height: 190, width: 220, marginTop: 15, margin: 10, borderRadius: 10, backgroundColor: "white", shadowRadius: 10, shadowColor: "black", shadowOpacity: 0.5}}>
-					{route.params.chatName!=null ? <Ionicons name="people-circle" style={{marginLeft: 55 }}size={125} color={route.params.color} />: <Ionicons name="person-circle" size={125} style={{marginLeft: 55 }} color={route.params.color} />}
-					<Text style={{fontSize: 20, fontWeight: "bold", marginLeft: "auto", marginRight: "auto", marginTop: "auto", marginBottom: "auto"}}>{route.params.chatName!=null ? route.params.chatName: route.params.userName}</Text>
+				<View style={{height: 210, width: 220, marginTop: 15, margin: 10, borderRadius: 10, backgroundColor: "white", shadowRadius: 10, shadowColor: "black", shadowOpacity: 0.5}}>
+					{route.params.chatName!=null ? <Ionicons name="people-circle" style={{marginLeft: 43 }} size={145} color={route.params.color} />: <Ionicons name="person-circle" size={145} style={{marginLeft: 43 }} color={route.params.color} />}
+					<Text style={{fontSize: 20, fontWeight: "bold", marginLeft: "auto", marginRight: "auto", marginTop: 0}}>{route.params.chatName!=null ? route.params.chatName: route.params.userName}</Text>
 				</View>
-				<View style={{height: 190, width: 150, marginTop: 15, margin: 10, borderRadius: 10, backgroundColor: "white", shadowRadius: 10, shadowColor: "black", shadowOpacity: 0.5}}>
-					<Text style={{fontSize: 20, fontWeight: "bold", margin: 10}}>55 Messages</Text>
-					<Text style={{fontSize: 20, fontWeight: "bold", margin: 10}}>53 Unread</Text>
-					<Text style={{fontSize: 19, fontWeight: "bold", margin: 10}}>22 Attachments</Text>
+				<View style={{height: 210, width: 150, marginTop: 15, margin: 10, borderRadius: 10, backgroundColor: "white", shadowRadius: 10, shadowColor: "black", shadowOpacity: 0.5}}>
+					<Text style={{fontSize: 20, marginLeft: 10, marginTop: 12}}><Text style={{fontWeight: "bold", fontSize: 30}}>55       </Text>Messages</Text>
+					<Text style={{fontSize: 20, marginLeft: 10}}><Text style={{fontWeight: "bold", fontSize: 30}}>53       </Text>Unread</Text>
+					<Text style={{fontSize: 20, marginLeft: 10}}><Text style={{fontWeight: "bold", fontSize: 30}}>22 </Text>Attachments</Text>
 				</View>
 			</View>
-			<View style={{height: 300, width: 390, marginTop: 15, margin: 10, borderRadius: 10, backgroundColor: "white", shadowRadius: 10, shadowColor: "black", shadowOpacity: 0.5}}>
-					<Text style={{fontSize: 20, fontWeight: "bold", margin: 20}}>{summary}</Text>
+			<View style={{width: 390, marginTop: 15, margin: 10, borderRadius: 10, backgroundColor: "white", shadowRadius: 10, shadowColor: "black", shadowOpacity: 0.5}}>
+					<Text style={{fontSize: 20, margin: 20}}>{summary}</Text>
+					<Pressable
+						onPress={async() => {
+							axios.get(`https://836e-2607-f140-6000-18-f4c2-ffc7-13ed-5cc6.ngrok-free.app/get_chat_summary?username=${route.params.userName}`).then((response) => {
+								setSummary(response.data);
+								storeSummary(route.params.userName, response.data);
+							})
+							}
+						}
+					>
+						<Text style={{fontSize: 20, margin: 20, marginBottom: 10, marginLeft: "auto", color: "blue", fontWeight: "bold"}}>Generate new summary</Text>
+					</Pressable>
+					<Pressable>
+						<Text style={{fontSize: 20, margin: 20, marginTop: 0, marginLeft: "auto", color: "blue", fontWeight: "bold"}}>Read full chat</Text>
+					</Pressable>
 			</View>
 			
 			</LinearGradient>

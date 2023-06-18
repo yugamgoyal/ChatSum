@@ -59,7 +59,7 @@ async def get_users():
             detail = {"chatName": dialog.chat.title, "userName": dialog.chat.username}
             users.append(detail)
         print("users: ", users)
-    telegramClient.disconnect()
+    await telegramClient.disconnect()
     return users
 
 
@@ -81,7 +81,7 @@ async def get_chat_summary():
             if message.date > yesterday:
                 text += f"\n {message.text}"
                 print(f"From: {message.chat.id}\n{message.text}\n\n")
-    telegramClient.disconnect()
+    await telegramClient.disconnect()
     if (text==""):
         return "No messages in the past 24 hours!"
     # Define the system message to instruct the model
