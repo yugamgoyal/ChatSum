@@ -13,14 +13,14 @@ const Stack = createNativeStackNavigator();
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Chats' headerMode={null}>
-        {/* <Stack.Screen 
+      <Stack.Navigator initialRouteName='Login' headerMode={null}>
+        <Stack.Screen 
           name="Login" 
           component={LoginScreen} 
           options={({route, navigation}) => ({
             headerShown: false
           })}
-        /> */}
+        />
         <Stack.Screen name="Chats" component= {ChannelListScreen} />
         <Stack.Screen 
           name="Channel Screen" 
