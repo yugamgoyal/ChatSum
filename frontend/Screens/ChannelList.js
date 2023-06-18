@@ -16,15 +16,15 @@ function ChannelListScreen({route, navigation}) {
 	const [chatArr, setChatArr] = useState([]);
 	const [searchTerm, setSearchTerm] = useState('');
 	const [displayArr, setDisplayArr] = useState([]);
+
 	const [selectedChannel, setSelectedChannel] = useState(-1);
 	useEffect(() => {
-		axios.get(`https://3cd6-135-180-118-61.ngrok-free.app/get_users`).then((response) => {
+		axios.get(`https://b59a-135-180-118-61.ngrok-free.app/get_users`).then((response) => {
 			console.log(response.data);
 			setDisplayArr(response.data);
 			setChatArr(response.data);
 		})
 	}, []);
-	
 	
 	return (
 		<View>
@@ -52,7 +52,7 @@ function ChannelListScreen({route, navigation}) {
 						return <Pressable
 							onPress={()=>{
 								setSelectedChannel(key);
-								navigation.navigate('Channel Screen', {userName: chat.userName});
+								navigation.navigate('Channel Screen', {userName: chat.userName, chatName: chat.chatName});
 							}}
 							style={
 							{
