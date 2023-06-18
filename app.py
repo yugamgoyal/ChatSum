@@ -59,17 +59,37 @@ async def get_users():
             if dialog.chat.username == None:
                 continue
 
+            chat_id = dialog.chat.id
+
+            # Calculate the timestamps for the previous day
+            today = datetime.utcnow().date()
+            previous_day = today - timedelta(days=1)
+            previous_day_start = datetime.combine(previous_day, datetime.min.time())
+            # yesterday = datetime.utcnow() - timedelta(days=1)
+
+            # Get the messages within the specified time range
+            messages = client.get_chat_history(
+                chat_id=chat_id,
+                limit=0,
+                offset_date=previous_day_start,
+            )
+
+            # Count the number of messages
+            message_count = 0
+            async for message in messages:
+                message_count += 1
+
+            unread_messages = dialog.unread_messages_count
+
+            attachment = await client.get_chat_photos_count(chat_id=chat_id)
+
             detail = {
                 "chatName": dialog.chat.title,
                 "userName": dialog.chat.username,
-                "chatID": dialog.chat.id,
-                "totalMessages": await client.get_chat_history_count(
-                    chat_id=dialog.chat.id
-                ),
-                "unreadMessages": dialog.unread_messages_count,
-                "attachment": await client.get_chat_photos_count(
-                    chat_id=dialog.chat.id
-                ),
+                "chatID": chat_id,
+                "totalMessages": message_count,
+                "unreadMessages": unread_messages,
+                "attachment": attachment,
             }
 
             users.append(detail)
@@ -107,7 +127,7 @@ async def get_chat_summary():
             if message.date > yesterday:
                 text += f"\n {message.text}"
                 print(f"From: {message.chat.id}\n{message.text}\n\n")
-    if (text==""):
+    if text == "":
         return "No messages in the past 24 hours!"
     # Define the system message to instruct the model
     system_message = "You are a helpful assistant that summarizes human conversations. Please read the messages below and provide a concise summary. Ignore any terms, policies, or non-human conversation."
