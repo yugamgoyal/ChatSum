@@ -2,6 +2,7 @@ import { View, Text, Pressable} from "react-native";
 import { useState, useEffect } from "react";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 function filter(arr, str) {
@@ -19,18 +20,45 @@ function randomColor() {
 	return colors[index];
 }
 
+const storeChannels = async (value) => {
+	try {
+	  await AsyncStorage.setItem("channels", JSON.stringify(value))
+	} catch (e) {
+	  // saving error
+	  console.log(e);
+	}
+}
+const getChannels = async () => {
+	try {
+	  const value = await AsyncStorage.getItem("channels")
+	  if(value !== null) {
+		// value previously stored
+		console.log("Found the value: "+ value);
+		return JSON.parse(value);
+	  }
+	} catch(e) {
+	  // error reading value
+	  console.log(e);
+	}
+}
+
 function ChannelListScreen({route, navigation}) {
 	const [chatArr, setChatArr] = useState([]);
 	const [searchTerm, setSearchTerm] = useState('');
 	const [displayArr, setDisplayArr] = useState([]);
 	const [colors, setColors] = useState({});
 	const [selectedChannel, setSelectedChannel] = useState(-1);
-	useEffect(() => {
-		
-		axios.get(`https://836e-2607-f140-6000-18-f4c2-ffc7-13ed-5cc6.ngrok-free.app/get_users`).then((response) => {
+	useEffect(async () => {
+		const storedChannels = await getChannels();
+		if (storedChannels!=null) {
+			setChatArr(storedChannels);
+			setDisplayArr(storedChannels);
+		}
+		axios.get(`https://8ee6-2600-1010-a002-bb4e-1572-156-8022-eaf1.ngrok-free.app/get_users`).then((response) => {
 			console.log(response.data);
 			setDisplayArr(response.data);
 			setChatArr(response.data);
+			storeChannels(response.data);
 			let colorsJSON = {};
 			for (let i=0; i<response.data.length; i++) {
 				colorsJSON[response.data[i].userName] = randomColor();
@@ -40,7 +68,7 @@ function ChannelListScreen({route, navigation}) {
 	}, []);
 	
 	return (
-		<View>
+		<View style={{zIndex:-1}}>
 			<TextInput 
 			placeholder="Search Chats"
 			value={searchTerm}
@@ -65,7 +93,15 @@ function ChannelListScreen({route, navigation}) {
 						return <Pressable
 							onPress={()=>{
 								setSelectedChannel(key);
-								navigation.navigate('Channel Screen', {userName: chat.userName, chatName: chat.chatName, color: colors[chat.userName]});
+								navigation.navigate(
+									'Channel Screen', 
+									{userName: chat.userName, 
+									chatName: chat.chatName, 
+									color: colors[chat.userName],
+									unreadMessages: chat.unreadMessages,
+									totalMessages: chat.totalMessages,
+									attachments: chat.attachment
+								});
 							}}
 							style={
 							{
@@ -79,7 +115,7 @@ function ChannelListScreen({route, navigation}) {
 							{chat.chatName!=null ? <Ionicons name="people-circle" size={72} color={colors[chat.userName]} />: <Ionicons name="person-circle" size={72} color={colors[chat.userName]} />}
 							<View>
 								<Text style={{marginTop: 10, marginBottom: 5, marginLeft: 10, fontWeight: "bold", fontSize: 17}}>{chat.chatName!=null ? chat.chatName: chat.userName}</Text>
-								<Text style={{marginTop: 3, marginLeft: 10, color: "#888"}}>{Math.round(Math.random()*100)} new messages</Text>
+								<Text style={{marginTop: 3, marginLeft: 10, color: "#888"}}>{chat.unreadMessages} new messages</Text>
 							</View>
 							
 						</Pressable>

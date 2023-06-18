@@ -4,6 +4,14 @@ import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { A } from '@expo/html-elements';
+import * as Linking from 'expo-linking';
+
+function getDate() {
+	const d = new Date();
+	let dateStr = d.toString().split(":")[0];
+	return dateStr.substring(4, dateStr.length-3);
+}
 
 const storeSummary = async (chat, value) => {
 	try {
@@ -39,7 +47,7 @@ function ChannelScreen({route, navigation}) {
 				setSummary(summaryStored);
 			}
 			else {
-				axios.get(`https://836e-2607-f140-6000-18-f4c2-ffc7-13ed-5cc6.ngrok-free.app/get_chat_summary?username=${route.params.userName}`).then((response) => {
+				axios.get(`https://8ee6-2600-1010-a002-bb4e-1572-156-8022-eaf1.ngrok-free.app/get_chat_summary?username=${route.params.userName}`).then((response) => {
 					setSummary(response.data);
 					storeSummary(route.params.userName, response.data);
 				})
@@ -74,7 +82,7 @@ function ChannelScreen({route, navigation}) {
 					<Text style={{fontSize: 32, fontWeight: "bold", marginRight: "auto", marginLeft: "auto", marginTop: "auto", marginBottom: "auto"}}>Daily Summary</Text>
 				</View>
 				<View style={{height: 120, width: 110, marginTop: 20, margin: 10, borderRadius: 10, backgroundColor: "white", shadowRadius: 10, shadowColor: "black", shadowOpacity: 0.5}}>
-					<Text style={{fontSize: 20, fontWeight: "bold", marginLeft: "auto", marginRight: "auto", marginTop: "auto", marginBottom: "auto"}}>June 18, 2023</Text>
+					<Text style={{fontSize: 20, fontWeight: "bold", marginLeft: "auto", marginRight: "auto", marginTop: "auto", marginBottom: "auto"}}>{getDate()}</Text>
 				</View>
 			</View>
 
@@ -84,16 +92,17 @@ function ChannelScreen({route, navigation}) {
 					<Text style={{fontSize: 20, fontWeight: "bold", marginLeft: "auto", marginRight: "auto", marginTop: 0}}>{route.params.chatName!=null ? route.params.chatName: route.params.userName}</Text>
 				</View>
 				<View style={{height: 210, width: 150, marginTop: 15, margin: 10, borderRadius: 10, backgroundColor: "white", shadowRadius: 10, shadowColor: "black", shadowOpacity: 0.5}}>
-					<Text style={{fontSize: 20, marginLeft: 10, marginTop: 12}}><Text style={{fontWeight: "bold", fontSize: 30}}>55       </Text>Messages</Text>
-					<Text style={{fontSize: 20, marginLeft: 10}}><Text style={{fontWeight: "bold", fontSize: 30}}>53       </Text>Unread</Text>
-					<Text style={{fontSize: 20, marginLeft: 10}}><Text style={{fontWeight: "bold", fontSize: 30}}>22 </Text>Attachments</Text>
+					<Text style={{fontSize: 20, marginLeft: 10, marginTop: 12}}><Text style={{fontWeight: "bold", fontSize: 30}}>{route.params.totalMessages}       </Text>Messages</Text>
+					<Text style={{fontSize: 20, marginLeft: 10}}><Text style={{fontWeight: "bold", fontSize: 30}}>{route.params.unreadMessages}           </Text>Unread</Text>
+					<Text style={{fontSize: 20, marginLeft: 10}}><Text style={{fontWeight: "bold", fontSize: 30}}>{route.params.attachments}         </Text>Attachments</Text>
 				</View>
 			</View>
 			<View style={{width: 390, marginTop: 15, margin: 10, borderRadius: 10, backgroundColor: "white", shadowRadius: 10, shadowColor: "black", shadowOpacity: 0.5}}>
 					<Text style={{fontSize: 20, margin: 20}}>{summary}</Text>
 					<Pressable
 						onPress={async() => {
-							axios.get(`https://836e-2607-f140-6000-18-f4c2-ffc7-13ed-5cc6.ngrok-free.app/get_chat_summary?username=${route.params.userName}`).then((response) => {
+							console.log(route.params.userName);
+							axios.get(`https://8ee6-2600-1010-a002-bb4e-1572-156-8022-eaf1.ngrok-free.app/get_chat_summary?username=${route.params.userName}`).then((response) => {
 								setSummary(response.data);
 								storeSummary(route.params.userName, response.data);
 							})
@@ -102,8 +111,11 @@ function ChannelScreen({route, navigation}) {
 					>
 						<Text style={{fontSize: 20, margin: 20, marginBottom: 10, marginLeft: "auto", color: "blue", fontWeight: "bold"}}>Generate new summary</Text>
 					</Pressable>
+					<A style={{margin: 20, marginTop: 0, marginLeft: "auto"}}href={`https://web.telegram.org/k/#@${route.params.userName}`}>
+						<Text style={{fontSize: 20, color: "blue", fontWeight: "bold"}}>Read full chat</Text>
+					</A>
 					<Pressable>
-						<Text style={{fontSize: 20, margin: 20, marginTop: 0, marginLeft: "auto", color: "blue", fontWeight: "bold"}}>Read full chat</Text>
+						
 					</Pressable>
 			</View>
 			
