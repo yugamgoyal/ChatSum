@@ -20,6 +20,7 @@ function App() {
     {label: 'Telegram', value: 'telegram'}
   ]);
   return (
+    
     <NavigationContainer>
       <Stack.Navigator initialRouteName='Login' headerMode={null}>
         <Stack.Screen 
