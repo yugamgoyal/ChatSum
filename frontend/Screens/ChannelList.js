@@ -1,18 +1,31 @@
 import { View, Text, Pressable} from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
-
+import axios from 'axios';
 function filter(arr, str) {
 	return arr.filter((element) => {
-		if (element.includes(str)) return true;
+		let text = "";
+		if (element.chatName!=null) text = element.chatName;
+		else text = element.userName;
+		if (text.toLowerCase().includes(str.toLowerCase())) return true;
+		return false;
 	})
 }
 
 function ChannelListScreen({route, navigation}) {
-	const chatsArr = Array(20).fill("Chat Name");
+	const [chatArr, setChatArr] = useState([]);
 	const [searchTerm, setSearchTerm] = useState('');
-	const [displayArr, setDisplayArr] = useState(chatsArr);
+	const [displayArr, setDisplayArr] = useState([]);
 	const [selectedChannel, setSelectedChannel] = useState(-1);
+	useEffect(() => {
+		axios.get(`https://3cd6-135-180-118-61.ngrok-free.app/get_users`).then((response) => {
+			console.log(response.data);
+			setDisplayArr(response.data);
+			setChatArr(response.data);
+		})
+	}, []);
+	
+	
 	return (
 		<View>
 			<TextInput 
@@ -20,7 +33,7 @@ function ChannelListScreen({route, navigation}) {
 			value={searchTerm}
 			onChangeText={(newText) => {
 				setSearchTerm(newText);
-				setDisplayArr(filter(chatsArr, newText));
+				setDisplayArr(filter(chatArr, newText));
 			}}
 			style={{
 				height: 50, 
@@ -35,8 +48,12 @@ function ChannelListScreen({route, navigation}) {
 			<ScrollView style={{height: "94%"}}>
 				{
 					displayArr.map((chat, key) => {
+						console.log(chat);
 						return <Pressable
-							onPress={()=>setSelectedChannel(key)}
+							onPress={()=>{
+								setSelectedChannel(key);
+								navigation.navigate('Channel Screen', {userName: chat.userName});
+							}}
 							style={
 							{
 								padding: 10, 
@@ -44,7 +61,7 @@ function ChannelListScreen({route, navigation}) {
 								borderWidth: selectedChannel==key ? 3: 0.3, 
 								borderColor: selectedChannel==key ? "#44c": "black"
 							}}>
-							<Text style={{marginTop: "auto", marginBottom: "auto"}}>{chat}</Text>
+							<Text style={{marginTop: "auto", marginBottom: "auto"}}>{chat.chatName!=null ? chat.chatName: chat.userName}</Text>
 						</Pressable>
 					})
 				}
