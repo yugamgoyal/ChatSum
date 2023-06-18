@@ -2,3 +2,4 @@ flask
 openai
 pyrogram
 flask[async]
+python-dotenv
