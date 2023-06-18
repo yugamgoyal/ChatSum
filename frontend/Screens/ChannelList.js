@@ -27,7 +27,7 @@ function ChannelListScreen({route, navigation}) {
 	const [selectedChannel, setSelectedChannel] = useState(-1);
 	useEffect(() => {
 		
-		axios.get(`https://b59a-135-180-118-61.ngrok-free.app/get_users`).then((response) => {
+		axios.get(`https://836e-2607-f140-6000-18-f4c2-ffc7-13ed-5cc6.ngrok-free.app/get_users`).then((response) => {
 			console.log(response.data);
 			setDisplayArr(response.data);
 			setChatArr(response.data);

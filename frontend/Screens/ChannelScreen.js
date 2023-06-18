@@ -39,7 +39,7 @@ function ChannelScreen({route, navigation}) {
 				setSummary(summaryStored);
 			}
 			else {
-				axios.get(`https://b59a-135-180-118-61.ngrok-free.app/get_chat_summary?username=${route.params.userName}`).then((response) => {
+				axios.get(`https://836e-2607-f140-6000-18-f4c2-ffc7-13ed-5cc6.ngrok-free.app/get_chat_summary?username=${route.params.userName}`).then((response) => {
 					setSummary(response.data);
 					storeSummary(route.params.userName, response.data);
 				})
